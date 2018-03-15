@@ -21,13 +21,22 @@ class Broker:
     def add_position(self, ticker, price, amount):
         volume = abs(price * amount)
         if amount > 0:
-            if volume * (1 + self.commission_percentage) > self.cash_:
+            if volume * (1 + 0.01 * self.commission_percentage) > self.cash_:
                 return None
         pos = Position(ticker)
         pos.enter(price, amount)
-        self.cash_ -= (volume + volume * self.commission_percentage)
+        self.cash_ -= price * amount
+        self.cash_ -= volume * 0.01 * self.commission_percentage
         self.positions.append(pos)
         return pos
+
+    def close_position(self, pos, price):
+        volume = abs(price * pos.size())
+        size = pos.size()
+        pos.exit(price)
+
+        self.cash_ += price * size
+        self.cash_ -= volume * 0.01 * self.commission_percentage
 
     def set_commission(self, percentage):
         self.commission_percentage = percentage

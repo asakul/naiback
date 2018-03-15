@@ -41,3 +41,21 @@ def test_broker_all_position():
 
     assert pos in broker.all_positions()
 
+def test_broker_close_position():
+    broker = Broker(initial_cash=100)
+
+    pos = broker.add_position('FOO', price=10, amount=1)
+    broker.close_position(pos, price=12)
+
+    assert broker.cash() == 100 + 2
+
+def test_broker_close_position_with_commission():
+    broker = Broker(initial_cash=100)
+    
+    broker.set_commission(percentage=1) # 1%
+
+    pos = broker.add_position('FOO', price=10, amount=1)
+    broker.close_position(pos, price=12)
+
+    assert broker.cash() == 100 + 2 - (10 + 12) * 0.01
+
