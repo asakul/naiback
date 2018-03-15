@@ -1,0 +1,3 @@
+
+class NaibackException(Exception):
+    pass
