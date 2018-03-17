@@ -1,6 +1,7 @@
 
 from ..exceptions import NaibackException
 
+
 class Bars:
     """
     Basic bar series structure

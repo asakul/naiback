@@ -1,0 +1,28 @@
+
+
+import pytest
+import datetime
+import io
+
+from naiback.data.feeds.genericcsvfeed import GenericCSVFeed
+
+
+@pytest.fixture
+def sample():
+    return '''
+<TICKER>,<PER>,<DATE>,<TIME>,<OPEN>,<HIGH>,<LOW>,<CLOSE>,<VOL>
+MICEX,D,20100111,000000,1411.3700000,1456.7600000,1411.3700000,1444.7800000,51634239250
+MICEX,D,20100112,000000,1444.7800000,1445.6400000,1424.8700000,1427.6700000,38343314792
+MICEX,D,20100113,000000,1417.8000000,1444.7700000,1412.9300000,1435.0100000,42183285247
+MICEX,D,20100114,000000,1439.5500000,1456.2700000,1439.5500000,1455.6500000,44372479120
+'''
+
+def test_feed(sample):
+    feed = GenericCSVFeed(io.StringIO(sample))
+
+    bars = feed.items()
+
+    assert len(bars) == 4
+
+
+
