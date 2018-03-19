@@ -3,7 +3,7 @@ from naiback.strategy import Strategy
 from naiback.data.feeds import FinamCSVFeed
 from naiback.indicators import SMA, RSI
 
-class MyStrategy(BarStrategy):
+class MyStrategy(Strategy):
 
     def __init__(self):
         super().__init__()

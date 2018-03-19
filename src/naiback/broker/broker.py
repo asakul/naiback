@@ -37,10 +37,23 @@ class Broker:
 
         self.cash_ += price * size
         self.cash_ -= volume * 0.01 * self.commission_percentage
+        return True
 
     def set_commission(self, percentage):
         self.commission_percentage = percentage
 
+    def last_position(self):
+        return self.positions[-1]
+
     def all_positions(self):
         return self.positions
+
+    def last_position_is_active(self):
+        if len(self.positions) == 0:
+            return False
+
+        if self.last_position().exit_price() is None:
+            return True
+
+        return False
 

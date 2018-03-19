@@ -19,6 +19,9 @@ class Position:
     def size(self):
         return self.size_
 
+    def is_long(self):
+        return self.size_ > 0
+
     def entry_commission(self):
         return self.entry_metadata['commission']
 

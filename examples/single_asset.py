@@ -13,7 +13,7 @@ class MyStrategy(SingleAssetStrategy):
         sma = SMA(self.bars.close, 200)
         rsi = RSI(self.bars.close, 2)
         stop = 0
-        for i, bar in self.bars[200:]:
+        for i in self.bars.index[200:]:
             if self.last_position_is_active():
                 if not self.exit_at_stop(i, self.last_position(), stop):
                     if self.bars.close[i] < exit_sma[i]:
