@@ -1,6 +1,6 @@
 
 from naiback.strategy import Strategy
-from naiback.data.feeds import FinamCSVFeed
+from naiback.data.feeds import GenericCSVFeed
 from naiback.indicators import SMA, RSI
 
 class MyStrategy(Strategy):
