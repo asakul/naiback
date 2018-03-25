@@ -59,3 +59,12 @@ def test_broker_close_position_with_commission():
 
     assert broker.cash() == 100 + 2 - (10 + 12) * 0.01
 
+def test_broker_close_position_places_it_in_retired_list():
+    broker = Broker(initial_cash=100)
+
+    pos = broker.add_position('FOO', price=10, amount=1, bar_index=0)
+    broker.close_position(pos, price=12, bar_index=1)
+
+    assert pos not in broker.all_positions()
+    assert pos in broker.retired_positions()
+

@@ -13,6 +13,7 @@ class Broker:
     def __init__(self, initial_cash=100000.):
         self.cash_ = initial_cash
         self.positions = []
+        self.retired_positions_ = []
         self.commission_percentage = 0
 
     def cash(self):
@@ -35,6 +36,9 @@ class Broker:
         size = pos.size()
         pos.exit(price, bar=bar_index)
 
+        self.retired_positions_.append(pos)
+        self.positions.remove(pos)
+
         self.cash_ += price * size
         self.cash_ -= volume * 0.01 * self.commission_percentage
         return True
@@ -46,7 +50,10 @@ class Broker:
         return self.positions[-1]
 
     def all_positions(self):
-        return self.positions
+        return self.positions[:]
+
+    def retired_positions(self):
+        return self.retired_positions_
 
     def last_position_is_active(self):
         if len(self.positions) == 0:

@@ -2,6 +2,7 @@ from abc import abstractmethod
 from naiback.broker.position import Position
 from naiback.broker.broker import Broker
 from naiback.data.bars import Bars
+from naiback.analyzers.statsanalyzer import StatsAnalyzer
 
 class Strategy:
     """
@@ -12,6 +13,10 @@ class Strategy:
         self.all_bars = []
         self.broker = Broker()
         self.bars = None
+        self.analyzer = StatsAnalyzer(self)
+
+    def get_analyzer(self, analyzer_id):
+        return self.analyzer
 
     def add_feed(self, feed):
         """

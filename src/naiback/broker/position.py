@@ -8,6 +8,7 @@ class Position:
         self.exit_price_ = None
         self.exit_metadata = {}
         self.size_ = None
+        self.original_size_ = None
         self.total_pnl = 0
 
     def entry_price(self):
@@ -19,8 +20,14 @@ class Position:
     def size(self):
         return self.size_
 
+    def original_size(self):
+        return self.orignal_size_
+
     def is_long(self):
-        return self.size_ > 0
+        return self.original_size_ > 0
+
+    def is_short(self):
+        return self.original_size_ < 0
 
     def entry_commission(self):
         return self.entry_metadata['commission']
@@ -28,12 +35,25 @@ class Position:
     def entry_bar(self):
         return self.entry_metadata['bar']
 
+    def exit_bar(self):
+        return self.exit_metadata['bar']
+
+    def bars_in_trade(self):
+        return self.exit_bar() - self.entry_bar()
+
     def pnl(self):
         return self.total_pnl
+
+    def profit_percentage(self):
+        if self.is_long():
+            return (self.exit_price() / self.entry_price() - 1) * 100.
+        else:
+            return -(self.exit_price() / self.entry_price() - 1) * 100.
 
     def enter(self, price, amount, **kwargs):
         self.entry_price_ = price
         self.size_ = amount
+        self.original_size_ = amount
 
         for k, v in kwargs.items():
             self.entry_metadata[k] = v
