@@ -10,8 +10,8 @@ class Strategy:
     def __init__(self):
         self.feeds = []
         self.all_bars = []
-        self.all_positions = []
         self.broker = Broker()
+        self.bars = None
 
     def add_feed(self, feed):
         """
@@ -32,6 +32,9 @@ class Strategy:
         """
         self._prepare_bars()
         self.execute()
+
+    def set_current_ticker(self, ticker):
+        self.bars = self._get_bars(ticker)
 
     def _prepare_bars(self):
         if len(self.feeds) == 0:
@@ -83,15 +86,15 @@ class Strategy:
 
     def buy_at_open(self, bar, ticker):
         bars = self._get_bars(ticker)
-        return self.broker.add_position(ticker, bars.open[bar], 1)
+        return self.broker.add_position(ticker, bars.open[bar], 1, bar)
 
     def buy_at_limit(self, bar, price, ticker):
         bars = self._get_bars(ticker)
         if bars.low[bar] <= price:
             if bars.open[bar] > price:
-                return self.broker.add_position(ticker, price, 1)
+                return self.broker.add_position(ticker, price, 1, bar)
             else:
-                return self.broker.add_position(ticker, bars.open[bar], 1)
+                return self.broker.add_position(ticker, bars.open[bar], 1, bar)
         else:
             return None
 
@@ -99,27 +102,27 @@ class Strategy:
         bars = self._get_bars(ticker)
         if bars.high[bar] >= price:
             if bars.open[bar] < price:
-                return self.broker.add_position(ticker, price, 1)
+                return self.broker.add_position(ticker, price, 1, bar)
             else:
-                return self.broker.add_position(ticker, bars.open[bar], 1)
+                return self.broker.add_position(ticker, bars.open[bar], 1, bar)
         else:
             return None
 
     def buy_at_close(self, bar, ticker):
         bars = self._get_bars(ticker)
-        return self.broker.add_position(ticker, bars.close[bar], 1)
+        return self.broker.add_position(ticker, bars.close[bar], 1, bar)
 
     def short_at_open(self, bar, ticker):
         bars = self._get_bars(ticker)
-        return self.broker.add_position(ticker, bars.open[bar], -1)
+        return self.broker.add_position(ticker, bars.open[bar], -1, bar)
 
     def short_at_limit(self, bar, price, ticker):
         bars = self._get_bars(ticker)
         if bars.high[bar] >= price:
             if bars.open[bar] < price:
-                return self.broker.add_position(ticker, price, -1)
+                return self.broker.add_position(ticker, price, -1, bar)
             else:
-                return self.broker.add_position(ticker, bars.open[bar], -1)
+                return self.broker.add_position(ticker, bars.open[bar], -1, bar)
         else:
             return None
 
@@ -127,36 +130,36 @@ class Strategy:
         bars = self._get_bars(ticker)
         if bars.low[bar] <= price:
             if bars.open[bar] > price:
-                return self.broker.add_position(ticker, price, -1)
+                return self.broker.add_position(ticker, price, -1, bar)
             else:
-                return self.broker.add_position(ticker, bars.open[bar], -1)
+                return self.broker.add_position(ticker, bars.open[bar], -1, bar)
         else:
             return None
 
     def short_at_close(self, bar, ticker):
         bars = self._get_bars(ticker)
-        return self.broker.add_position(ticker, bars.close[bar], -1)
+        return self.broker.add_position(ticker, bars.close[bar], -1, bar)
 
     def exit_at_open(self, bar, pos):
         bars = self._get_bars(pos.ticker)
-        return self.broker.close_position(pos, bars.open[bar])
+        return self.broker.close_position(pos, bars.open[bar], bar)
 
     def exit_at_limit(self, bar, price, pos):
         bars = self._get_bars(pos.ticker)
         if pos.is_long():
             if bars.high[bar] >= price:
                 if bars.open[bar] < price:
-                    return self.broker.close_position(pos, price)
+                    return self.broker.close_position(pos, price, bar)
                 else:
-                    return self.broker.close_position(pos, bars.open[bar])
+                    return self.broker.close_position(pos, bars.open[bar], bar)
             else:
                 return False
         else:
             if bars.low[bar] <= price:
                 if bars.open[bar] > price:
-                    return self.broker.close_position(pos, price)
+                    return self.broker.close_position(pos, price, bar)
                 else:
-                    return self.broker.close_position(pos, bars.open[bar])
+                    return self.broker.close_position(pos, bars.open[bar], bar)
             else:
                 return False
 
@@ -165,21 +168,21 @@ class Strategy:
         if pos.is_long():
             if bars.low[bar] <= price:
                 if bars.open[bar] > price:
-                    return self.broker.close_position(pos, price)
+                    return self.broker.close_position(pos, price, bar)
                 else:
-                    return self.broker.close_position(pos, bars.open[bar])
+                    return self.broker.close_position(pos, bars.open[bar], bar)
             else:
                 return False
         else:
             if bars.high[bar] >= price:
                 if bars.open[bar] < price:
-                    return self.broker.close_position(pos, price)
+                    return self.broker.close_position(pos, price, bar)
                 else:
-                    return self.broker.close_position(pos, bars.open[bar])
+                    return self.broker.close_position(pos, bars.open[bar], bar)
             else:
                 return False
 
     def exit_at_close(self, bar, pos):
         bars = self._get_bars(pos.ticker)
-        return self.broker.close_position(pos, bars.close[bar])
+        return self.broker.close_position(pos, bars.close[bar], bar)
 

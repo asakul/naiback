@@ -1,0 +1,3 @@
+
+from .genericcsvfeed import GenericCSVFeed
+

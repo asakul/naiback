@@ -18,22 +18,22 @@ class Broker:
     def cash(self):
         return self.cash_
 
-    def add_position(self, ticker, price, amount):
+    def add_position(self, ticker, price, amount, bar_index):
         volume = abs(price * amount)
         if amount > 0:
             if volume * (1 + 0.01 * self.commission_percentage) > self.cash_:
                 return None
         pos = Position(ticker)
-        pos.enter(price, amount)
+        pos.enter(price, amount, bar=bar_index)
         self.cash_ -= price * amount
         self.cash_ -= volume * 0.01 * self.commission_percentage
         self.positions.append(pos)
         return pos
 
-    def close_position(self, pos, price):
+    def close_position(self, pos, price, bar_index):
         volume = abs(price * pos.size())
         size = pos.size()
-        pos.exit(price)
+        pos.exit(price, bar=bar_index)
 
         self.cash_ += price * size
         self.cash_ -= volume * 0.01 * self.commission_percentage

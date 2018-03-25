@@ -38,9 +38,12 @@ class Position:
         for k, v in kwargs.items():
             self.entry_metadata[k] = v
 
-    def exit(self, price):
+    def exit(self, price, **kwargs):
         self.exit_price_ = price
         self.total_pnl += (self.exit_price() - self.entry_price()) * self.size()
         self.size_ = 0
+
+        for k, v in kwargs.items():
+            self.exit_metadata[k] = v
 
 
