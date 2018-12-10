@@ -39,6 +39,11 @@ class StatsAnalyzer(Analyzer):
 
         return table.get_string()
 
+    def get_result(self):
+        positions = self.strategy.broker.retired_positions() # TODO also add open positions
+        stats = self.calc_stats(positions)
+        return stats
+
     def calc_stats(self, positions):
         longs = list(filter(lambda x: x.is_long(), positions))
         shorts = list(filter(lambda x: x.is_short(), positions))

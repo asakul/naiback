@@ -45,3 +45,13 @@ class Bars:
         for bar in feed.items():
             bars.append_bar(bar.open, bar.high, bar.low, bar.close, bar.volume, bar.timestamp)
         return bars
+
+    @classmethod
+    def from_feed_filter(cls, feed, from_time, to_time):
+        if feed.type() != 'bars':
+            raise NaibackException('Invalid feed type: "{}", should be "bars"'.format(feed.type()))
+        bars = Bars(feed.ticker())
+        for bar in feed.items():
+            if bar.timestamp >= from_time and bar.timestamp <= to_time:
+                bars.append_bar(bar.open, bar.high, bar.low, bar.close, bar.volume, bar.timestamp)
+        return bars

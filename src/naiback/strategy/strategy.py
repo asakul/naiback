@@ -3,6 +3,7 @@ from naiback.broker.position import Position
 from naiback.broker.broker import Broker
 from naiback.data.bars import Bars
 from naiback.analyzers.statsanalyzer import StatsAnalyzer
+from naiback.analyzers.tradeslistanalyzer import TradesListAnalyzer
 
 class Strategy:
     """
@@ -13,10 +14,11 @@ class Strategy:
         self.all_bars = []
         self.broker = Broker()
         self.bars = None
-        self.analyzer = StatsAnalyzer(self)
+        self.analyzers = { 'stats' : StatsAnalyzer(self),
+                'tradeslist' : TradesListAnalyzer(self) }
 
     def get_analyzer(self, analyzer_id):
-        return self.analyzer
+        return self.analyzers[analyzer_id]
 
     def add_feed(self, feed):
         """
@@ -35,19 +37,22 @@ class Strategy:
         """
         By default, just calls execute.
         """
-        self._prepare_bars()
+        self._prepare_bars(from_time, to_time)
         self.execute()
 
     def set_current_ticker(self, ticker):
         self.bars = self._get_bars(ticker)
 
-    def _prepare_bars(self):
+    def _prepare_bars(self, from_time, to_time):
         if len(self.feeds) == 0:
             raise NaibackException('No feeds added to strategy')
 
         self.all_bars.clear()
         for feed in self.feeds:
-            self.all_bars.append(Bars.from_feed(feed))
+            if from_time is None or to_time is None:
+                self.all_bars.append(Bars.from_feed(feed))
+            else:
+                self.all_bars.append(Bars.from_feed_filter(feed, from_time, to_time))
 
         all_dates = list(sorted(self._combine_dates()))
 
@@ -90,10 +95,14 @@ class Strategy:
         return dates
 
     def buy_at_open(self, bar, ticker):
+        if isinstance(ticker, int):
+            ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         return self.broker.add_position(ticker, bars.open[bar], 1, bar)
 
     def buy_at_limit(self, bar, price, ticker):
+        if isinstance(ticker, int):
+            ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         if bars.low[bar] <= price:
             if bars.open[bar] > price:
@@ -104,6 +113,8 @@ class Strategy:
             return None
 
     def buy_at_stop(self, bar, price, ticker):
+        if isinstance(ticker, int):
+            ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         if bars.high[bar] >= price:
             if bars.open[bar] < price:
@@ -114,14 +125,20 @@ class Strategy:
             return None
 
     def buy_at_close(self, bar, ticker):
+        if isinstance(ticker, int):
+            ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         return self.broker.add_position(ticker, bars.close[bar], 1, bar)
 
     def short_at_open(self, bar, ticker):
+        if isinstance(ticker, int):
+            ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         return self.broker.add_position(ticker, bars.open[bar], -1, bar)
 
     def short_at_limit(self, bar, price, ticker):
+        if isinstance(ticker, int):
+            ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         if bars.high[bar] >= price:
             if bars.open[bar] < price:
@@ -132,6 +149,8 @@ class Strategy:
             return None
 
     def short_at_stop(self, bar, price, ticker):
+        if isinstance(ticker, int):
+            ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         if bars.low[bar] <= price:
             if bars.open[bar] > price:
@@ -142,6 +161,8 @@ class Strategy:
             return None
 
     def short_at_close(self, bar, ticker):
+        if isinstance(ticker, int):
+            ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         return self.broker.add_position(ticker, bars.close[bar], -1, bar)
 

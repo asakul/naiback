@@ -7,3 +7,6 @@ class Analyzer:
     def generate_plain_text(self):
         pass
 
+    def get_result(self):
+        pass
+

@@ -13,7 +13,7 @@ class MyStrategy(Strategy):
         rsi1 = RSI(self.bars.close, 2)
         self.set_current_ticker('GAZP')
         rsi2 = RSI(self.bars.close, 2)
-        for i in self.bars.index[200:]:
+        for i in self.bars.index[200:-1]:
             if self.last_position_is_active():
                 if i - self.last_position().entry_bar() > 3:
                     for position in self.all_positions():
