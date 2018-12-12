@@ -4,6 +4,7 @@ from naiback.broker.broker import Broker
 from naiback.data.bars import Bars
 from naiback.analyzers.statsanalyzer import StatsAnalyzer
 from naiback.analyzers.tradeslistanalyzer import TradesListAnalyzer
+from naiback.exceptions import NaibackException
 
 class Strategy:
     """
@@ -38,6 +39,8 @@ class Strategy:
         By default, just calls execute.
         """
         self._prepare_bars(from_time, to_time)
+        if len(self.all_bars) > 0:
+            self.bars = self.all_bars[0]
         self.execute()
 
     def set_current_ticker(self, ticker):
