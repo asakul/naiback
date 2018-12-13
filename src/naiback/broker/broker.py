@@ -15,9 +15,13 @@ class Broker:
         self.positions = []
         self.retired_positions_ = []
         self.commission_percentage = 0
+        self.timestamp = None
 
     def cash(self):
         return self.cash_
+
+    def set_timestamp(self, ts):
+        self.timestamp = ts
 
     def add_position(self, ticker, price, amount, bar_index):
         volume = abs(price * amount)
@@ -25,7 +29,7 @@ class Broker:
             if volume * (1 + 0.01 * self.commission_percentage) > self.cash_:
                 return None
         pos = Position(ticker)
-        pos.enter(price, amount, bar=bar_index)
+        pos.enter(price, amount, bar=bar_index, timestamp=self.timestamp)
         self.cash_ -= price * amount
         self.cash_ -= volume * 0.01 * self.commission_percentage
         self.positions.append(pos)
@@ -34,7 +38,7 @@ class Broker:
     def close_position(self, pos, price, bar_index):
         volume = abs(price * pos.size())
         size = pos.size()
-        pos.exit(price, bar=bar_index)
+        pos.exit(price, bar=bar_index, timestamp=self.timestamp)
 
         self.retired_positions_.append(pos)
         self.positions.remove(pos)

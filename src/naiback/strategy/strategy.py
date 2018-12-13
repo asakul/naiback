@@ -101,12 +101,14 @@ class Strategy:
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.add_position(ticker, bars.open[bar], 1, bar)
 
     def buy_at_limit(self, bar, price, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         if bars.low[bar] <= price:
             if bars.open[bar] > price:
                 return self.broker.add_position(ticker, price, 1, bar)
@@ -119,6 +121,7 @@ class Strategy:
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         if bars.high[bar] >= price:
             if bars.open[bar] < price:
                 return self.broker.add_position(ticker, price, 1, bar)
@@ -131,18 +134,21 @@ class Strategy:
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.add_position(ticker, bars.close[bar], 1, bar)
 
     def short_at_open(self, bar, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.add_position(ticker, bars.open[bar], -1, bar)
 
     def short_at_limit(self, bar, price, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         if bars.high[bar] >= price:
             if bars.open[bar] < price:
                 return self.broker.add_position(ticker, price, -1, bar)
@@ -155,6 +161,7 @@ class Strategy:
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         if bars.low[bar] <= price:
             if bars.open[bar] > price:
                 return self.broker.add_position(ticker, price, -1, bar)
@@ -167,14 +174,17 @@ class Strategy:
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.add_position(ticker, bars.close[bar], -1, bar)
 
     def exit_at_open(self, bar, pos):
         bars = self._get_bars(pos.ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.close_position(pos, bars.open[bar], bar)
 
     def exit_at_limit(self, bar, price, pos):
         bars = self._get_bars(pos.ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         if pos.is_long():
             if bars.high[bar] >= price:
                 if bars.open[bar] < price:
@@ -194,6 +204,7 @@ class Strategy:
 
     def exit_at_stop(self, bar, price, pos):
         bars = self._get_bars(pos.ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         if pos.is_long():
             if bars.low[bar] <= price:
                 if bars.open[bar] > price:
@@ -213,5 +224,6 @@ class Strategy:
 
     def exit_at_close(self, bar, pos):
         bars = self._get_bars(pos.ticker)
+        self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.close_position(pos, bars.close[bar], bar)
 

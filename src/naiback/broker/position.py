@@ -35,8 +35,14 @@ class Position:
     def entry_bar(self):
         return self.entry_metadata['bar']
 
+    def entry_time(self):
+        return self.entry_metadata['timestamp']
+
     def exit_bar(self):
         return self.exit_metadata['bar']
+
+    def exit_time(self):
+        return self.exit_metadata['timestamp']
 
     def bars_in_trade(self):
         return self.exit_bar() - self.entry_bar()

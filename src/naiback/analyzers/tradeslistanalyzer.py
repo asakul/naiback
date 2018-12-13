@@ -13,4 +13,6 @@ class TradesListAnalyzer(Analyzer):
     def make_trade(self, pos):
         return { 'entry_price' : pos.entry_price(),
                  'exit_price' : pos.exit_price(),
+                 'entry_time' : pos.entry_time(),
+                 'exit_time' : pos.exit_time(),
                  'pnl' : pos.pnl() }
