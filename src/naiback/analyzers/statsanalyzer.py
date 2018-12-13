@@ -11,7 +11,7 @@ def render_ratio(a, b):
     if b != 0:
         return a / b
     else:
-        return "∞"
+        return 0
 
 class StatsAnalyzer(Analyzer):
 
