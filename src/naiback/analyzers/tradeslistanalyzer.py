@@ -15,4 +15,6 @@ class TradesListAnalyzer(Analyzer):
                  'exit_price' : pos.exit_price(),
                  'entry_time' : pos.entry_time(),
                  'exit_time' : pos.exit_time(),
-                 'pnl' : pos.pnl() }
+                 'pnl' : pos.pnl(),
+                 'is_long' : pos.is_long(),
+                 'security' : pos.ticker }
