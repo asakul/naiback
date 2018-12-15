@@ -17,4 +17,5 @@ class TradesListAnalyzer(Analyzer):
                  'exit_time' : pos.exit_time(),
                  'pnl' : pos.pnl(),
                  'is_long' : pos.is_long(),
-                 'security' : pos.ticker }
+                 'security' : pos.ticker,
+                 'size' : pos.original_size() }

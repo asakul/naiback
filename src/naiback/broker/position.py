@@ -21,7 +21,7 @@ class Position:
         return self.size_
 
     def original_size(self):
-        return self.orignal_size_
+        return self.original_size_
 
     def is_long(self):
         return self.original_size_ > 0

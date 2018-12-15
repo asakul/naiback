@@ -2,3 +2,5 @@
 build/*
 dist/*
 src/naiback.egg-info/*
+.*
+__pycache__

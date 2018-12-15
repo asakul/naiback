@@ -6,6 +6,8 @@ from naiback.analyzers.statsanalyzer import StatsAnalyzer
 from naiback.analyzers.tradeslistanalyzer import TradesListAnalyzer
 from naiback.exceptions import NaibackException
 
+import math
+
 class Strategy:
     """
     """
@@ -15,6 +17,7 @@ class Strategy:
         self.all_bars = []
         self.broker = Broker()
         self.bars = None
+        self.trade_size = 1
         self.analyzers = { 'stats' : StatsAnalyzer(self),
                 'tradeslist' : TradesListAnalyzer(self) }
 
@@ -26,6 +29,9 @@ class Strategy:
         Adds feed to feeds list.
         """
         self.feeds.append(feed)
+
+    def set_trade_size(self, size):
+        self.trade_size = math.floor(size)
 
     @abstractmethod
     def execute(self):
@@ -102,7 +108,7 @@ class Strategy:
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         self.broker.set_timestamp(bars.timestamp[bar])
-        return self.broker.add_position(ticker, bars.open[bar], 1, bar)
+        return self.broker.add_position(ticker, bars.open[bar], self.trade_size, bar)
 
     def buy_at_limit(self, bar, price, ticker):
         if isinstance(ticker, int):
@@ -111,9 +117,9 @@ class Strategy:
         self.broker.set_timestamp(bars.timestamp[bar])
         if bars.low[bar] <= price:
             if bars.open[bar] > price:
-                return self.broker.add_position(ticker, price, 1, bar)
+                return self.broker.add_position(ticker, price, self.trade_size, bar)
             else:
-                return self.broker.add_position(ticker, bars.open[bar], 1, bar)
+                return self.broker.add_position(ticker, bars.open[bar], self.trade_size, bar)
         else:
             return None
 
@@ -124,9 +130,9 @@ class Strategy:
         self.broker.set_timestamp(bars.timestamp[bar])
         if bars.high[bar] >= price:
             if bars.open[bar] < price:
-                return self.broker.add_position(ticker, price, 1, bar)
+                return self.broker.add_position(ticker, price, self.trade_size, bar)
             else:
-                return self.broker.add_position(ticker, bars.open[bar], 1, bar)
+                return self.broker.add_position(ticker, bars.open[bar], self.trade_size, bar)
         else:
             return None
 
@@ -135,14 +141,14 @@ class Strategy:
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         self.broker.set_timestamp(bars.timestamp[bar])
-        return self.broker.add_position(ticker, bars.close[bar], 1, bar)
+        return self.broker.add_position(ticker, bars.close[bar], self.trade_size, bar)
 
     def short_at_open(self, bar, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         self.broker.set_timestamp(bars.timestamp[bar])
-        return self.broker.add_position(ticker, bars.open[bar], -1, bar)
+        return self.broker.add_position(ticker, bars.open[bar], -self.trade_size, bar)
 
     def short_at_limit(self, bar, price, ticker):
         if isinstance(ticker, int):
@@ -151,9 +157,9 @@ class Strategy:
         self.broker.set_timestamp(bars.timestamp[bar])
         if bars.high[bar] >= price:
             if bars.open[bar] < price:
-                return self.broker.add_position(ticker, price, -1, bar)
+                return self.broker.add_position(ticker, price, -self.trade_size, bar)
             else:
-                return self.broker.add_position(ticker, bars.open[bar], -1, bar)
+                return self.broker.add_position(ticker, bars.open[bar], -self.trade_size, bar)
         else:
             return None
 
@@ -164,9 +170,9 @@ class Strategy:
         self.broker.set_timestamp(bars.timestamp[bar])
         if bars.low[bar] <= price:
             if bars.open[bar] > price:
-                return self.broker.add_position(ticker, price, -1, bar)
+                return self.broker.add_position(ticker, price, -self.trade_size, bar)
             else:
-                return self.broker.add_position(ticker, bars.open[bar], -1, bar)
+                return self.broker.add_position(ticker, bars.open[bar], -self.trade_size, bar)
         else:
             return None
 
@@ -175,7 +181,7 @@ class Strategy:
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         self.broker.set_timestamp(bars.timestamp[bar])
-        return self.broker.add_position(ticker, bars.close[bar], -1, bar)
+        return self.broker.add_position(ticker, bars.close[bar], -self.trade_size, bar)
 
     def exit_at_open(self, bar, pos):
         bars = self._get_bars(pos.ticker)
