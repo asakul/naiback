@@ -25,9 +25,9 @@ class Broker:
 
     def add_position(self, ticker, price, amount, bar_index):
         volume = abs(price * amount)
-        if amount > 0:
-            if volume * (1 + 0.01 * self.commission_percentage) > self.cash_:
-                return None
+        #if amount > 0:
+        #    if volume * (1 + 0.01 * self.commission_percentage) > self.cash_:
+        #        return None
         pos = Position(ticker)
         pos.enter(price, amount, bar=bar_index, timestamp=self.timestamp)
         self.cash_ -= price * amount
