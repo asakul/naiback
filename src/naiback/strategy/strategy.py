@@ -4,6 +4,7 @@ from naiback.broker.broker import Broker
 from naiback.data.bars import Bars
 from naiback.analyzers.statsanalyzer import StatsAnalyzer
 from naiback.analyzers.tradeslistanalyzer import TradesListAnalyzer
+from naiback.analyzers.equityanalyzer import EquityAnalyzer
 from naiback.exceptions import NaibackException
 
 import math
@@ -19,7 +20,8 @@ class Strategy:
         self.bars = None
         self.trade_size = 1
         self.analyzers = { 'stats' : StatsAnalyzer(self),
-                'tradeslist' : TradesListAnalyzer(self) }
+                           'tradeslist' : TradesListAnalyzer(self),
+                           'equity' : EquityAnalyzer(self) }
 
     def get_analyzer(self, analyzer_id):
         return self.analyzers[analyzer_id]
