@@ -70,6 +70,9 @@ class Strategy:
         for bars in self.all_bars:
             self._synchronize_bars(bars, all_dates)
 
+    def get_bars(self, ticker):
+        return self._get_bars(ticker)
+
     def _get_bars(self, ticker):
         for bars in self.all_bars:
             if bars.ticker == ticker:
