@@ -69,6 +69,7 @@ class Strategy:
 
         for bars in self.all_bars:
             self._synchronize_bars(bars, all_dates)
+            bars.index = range(0, len(bars.close))
 
     def get_bars(self, ticker):
         return self._get_bars(ticker)
@@ -100,6 +101,7 @@ class Strategy:
                 volume = bars.volume[bar_pos]
 
                 bars.insert_bar(bar_pos, open_, high, low, close, volume, dt)
+            bar_pos += 1
 
     def _combine_dates(self):
         dates = set()
