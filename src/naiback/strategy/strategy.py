@@ -108,14 +108,18 @@ class Strategy:
 
         return dates
 
-    def buy_at_open(self, bar, ticker):
+    def buy_at_open(self, bar, ticker=None):
+        if ticker is None:
+            ticker = 0
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.add_position(ticker, bars.open[bar], self.trade_size, bar)
 
-    def buy_at_limit(self, bar, price, ticker):
+    def buy_at_limit(self, bar, price, ticker=None):
+        if ticker is None:
+            ticker = 0
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
@@ -128,7 +132,9 @@ class Strategy:
         else:
             return None
 
-    def buy_at_stop(self, bar, price, ticker):
+    def buy_at_stop(self, bar, price, ticker=None):
+        if ticker is None:
+            ticker = 0
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
@@ -141,7 +147,9 @@ class Strategy:
         else:
             return None
 
-    def buy_at_close(self, bar, ticker):
+    def buy_at_close(self, bar, ticker=None):
+        if ticker is None:
+            ticker = 0
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
