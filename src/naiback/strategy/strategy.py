@@ -69,7 +69,6 @@ class Strategy:
 
         for bars in self.all_bars:
             self._synchronize_bars(bars, all_dates)
-            bars.index = range(0, len(bars.close))
 
     def get_bars(self, ticker):
         return self._get_bars(ticker)
@@ -101,7 +100,6 @@ class Strategy:
                 volume = bars.volume[bar_pos]
 
                 bars.insert_bar(bar_pos, open_, high, low, close, volume, dt)
-            bar_pos += 1
 
     def _combine_dates(self):
         dates = set()
@@ -143,27 +141,21 @@ class Strategy:
         else:
             return None
 
-    def buy_at_close(self, bar, ticker=None):
-        if ticker is None:
-            ticker = 0
+    def buy_at_close(self, bar, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.add_position(ticker, bars.close[bar], self.trade_size, bar)
 
-    def short_at_open(self, bar, ticker=None):
-        if ticker is None:
-            ticker = 0
+    def short_at_open(self, bar, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
         self.broker.set_timestamp(bars.timestamp[bar])
         return self.broker.add_position(ticker, bars.open[bar], -self.trade_size, bar)
 
-    def short_at_limit(self, bar, price, ticker=0):
-        if ticker is None:
-            ticker = 0
+    def short_at_limit(self, bar, price, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
@@ -176,9 +168,7 @@ class Strategy:
         else:
             return None
 
-    def short_at_stop(self, bar, price, ticker=None):
-        if ticker is None:
-            ticker = 0
+    def short_at_stop(self, bar, price, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
@@ -191,9 +181,7 @@ class Strategy:
         else:
             return None
 
-    def short_at_close(self, bar, ticker=None):
-        if ticker is None:
-            ticker = 0
+    def short_at_close(self, bar, ticker):
         if isinstance(ticker, int):
             ticker = self.all_bars[ticker].ticker
         bars = self._get_bars(ticker)
