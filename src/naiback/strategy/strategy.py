@@ -92,15 +92,32 @@ class Strategy:
 
     def _synchronize_bars(self, bars, all_dates):
         bar_pos = 0
+        open_ = 0
+        high = 0
+        low = 0
+        close = 0
+        volume = bars.volume[bar_pos]
         for dt in all_dates:
-            if bars.timestamp[bar_pos] > dt:
-                open_ = bars.open[bar_pos]
-                high = bars.high[bar_pos]
-                low = bars.low[bar_pos]
-                close = bars.close[bar_pos]
-                volume = bars.volume[bar_pos]
-
+            if len(bars.timestamp) > bar_pos:
+                print("new close: {} ({})".format(close, dt))
+                    
+                if bars.timestamp[bar_pos] > dt:
+                    print("Inserting at {}: {}".format(dt, close))
+                    bars.insert_bar(bar_pos, open_, high, low, close, volume, dt)
+                else:
+                    open_ = bars.open[bar_pos]
+                    high = bars.high[bar_pos]
+                    low = bars.low[bar_pos]
+                    close = bars.close[bar_pos]
+                    volume = bars.volume[bar_pos]
+                    if bars.timestamp[bar_pos] > dt:
+                        bars.insert_bar(bar_pos, open_, high, low, close, volume, dt)
+                    print("new close: {} ({})".format(close, dt))
+                    
+            else:
                 bars.insert_bar(bar_pos, open_, high, low, close, volume, dt)
+                print("Inserting[2] at {}: {}".format(dt, close))
+                    
             bar_pos += 1
 
     def _combine_dates(self):
