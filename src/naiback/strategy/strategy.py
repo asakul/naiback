@@ -100,7 +100,7 @@ class Strategy:
         for dt in all_dates:
             if len(bars.timestamp) > bar_pos:
                 print("new close: {} ({})".format(close, dt))
-                    
+
                 if bars.timestamp[bar_pos] > dt:
                     print("Inserting at {}: {}".format(dt, close))
                     bars.insert_bar(bar_pos, open_, high, low, close, volume, dt)

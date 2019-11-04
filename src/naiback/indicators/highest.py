@@ -7,7 +7,7 @@ def Highest(data, period):
         return result
     result[0] = data[0]
     for i in range(1, len(data)):
-        result[i] = max(data[max(0, i - period):(i+1)])
+        result[i] = max(data[max(0, i - period + 1):(i+1)])
 
     return result
     
@@ -16,4 +16,4 @@ def HighestValue(data, index, period):
         return None
     if index == 0:
         return data[0]
-    return max(data[max(0, index - period):(index+1)])
+    return max(data[max(0, index - period + 1):(index+1)])

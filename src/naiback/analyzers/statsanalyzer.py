@@ -3,6 +3,9 @@ from .analyzer import Analyzer
 
 from prettytable import PrettyTable
 
+import numpy as np
+import math
+
 def render_float(a):
     return "{:.3f}".format(a)
 
@@ -97,5 +100,27 @@ class StatsAnalyzer(Analyzer):
         result['all']['profit_factor'] = render_ratio(result['all']['total_won'], -result['all']['total_lost'])
         result['long']['profit_factor'] = render_ratio(result['long']['total_won'], -result['long']['total_lost'])
         result['short']['profit_factor'] = render_ratio(result['short']['total_won'], -result['short']['total_lost'])
+
+        mean = np.mean(list(map(lambda x: x.pnl(), positions)))
+        stddev = np.std(list(map(lambda x: x.pnl(), positions)))
+        sharpe = mean / stddev
+        tstat = sharpe * math.sqrt(len(positions))
+        result['all']['sharpe_ratio'] = sharpe
+        result['all']['t_stat'] = tstat
+
+        mean = np.mean(list(map(lambda x: x.pnl(), longs)))
+        stddev = np.std(list(map(lambda x: x.pnl(), longs)))
+        sharpe = mean / stddev
+        tstat = sharpe * math.sqrt(len(longs))
+        result['long']['sharpe_ratio'] = sharpe
+        result['long']['t_stat'] = tstat
+
+        mean = np.mean(list(map(lambda x: x.pnl(), shorts)))
+        stddev = np.std(list(map(lambda x: x.pnl(), shorts)))
+        sharpe = mean / stddev
+        tstat = sharpe * math.sqrt(len(shorts))
+        result['short']['sharpe_ratio'] = sharpe
+        result['short']['t_stat'] = tstat
+
 
         return result
