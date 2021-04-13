@@ -15,6 +15,7 @@ class Broker:
         self.positions = []
         self.retired_positions_ = []
         self.commission_percentage = 0
+        self.commission_fixed = 0
         self.timestamp = None
 
     def cash(self):
@@ -28,27 +29,30 @@ class Broker:
         #if amount > 0:
         #    if volume * (1 + 0.01 * self.commission_percentage) > self.cash_:
         #        return None
+        commission = volume * 0.01 * self.commission_percentage + abs(amount) * self.commission_fixed
         pos = Position(ticker)
-        pos.enter(price, amount, bar=bar_index, timestamp=self.timestamp)
+        pos.enter(price, amount, bar=bar_index, timestamp=self.timestamp, commission=commission)
         self.cash_ -= price * amount
-        self.cash_ -= volume * 0.01 * self.commission_percentage
+        self.cash_ -= commission
         self.positions.append(pos)
         return pos
 
     def close_position(self, pos, price, bar_index):
         volume = abs(price * pos.size())
         size = pos.size()
-        pos.exit(price, bar=bar_index, timestamp=self.timestamp)
+        commission = volume * 0.01 * self.commission_percentage + abs(size) * self.commission_fixed
+        pos.exit(price, bar=bar_index, timestamp=self.timestamp, commission=commission)
 
         self.retired_positions_.append(pos)
         self.positions.remove(pos)
 
         self.cash_ += price * size
-        self.cash_ -= volume * 0.01 * self.commission_percentage
+        self.cash_ -= commission
         return True
 
-    def set_commission(self, percentage):
+    def set_commission(self, percentage, fixed):
         self.commission_percentage = percentage
+        self.commission_fixed = fixed
 
     def last_position(self):
         return self.positions[-1]

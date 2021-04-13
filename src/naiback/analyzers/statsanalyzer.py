@@ -16,6 +16,25 @@ def render_ratio(a, b):
     else:
         return 0
 
+def calculate_kelly(pos):
+    winning = list(filter(lambda x: x.pnl() >= 0, pos))
+    losing = list(filter(lambda x: x.pnl() < 0, pos))
+
+    won = len(winning)
+    lost = len(losing)
+
+    if won == 0:
+        return 0
+    elif lost == 0:
+        return 1
+
+    avg_winning = sum(map(lambda x: x.pnl(), winning)) / won
+    avg_losing = sum(map(lambda x: x.pnl(), losing)) / lost
+
+    p = float(won) / (won + lost)
+
+    return p + (1 - p)/(avg_winning / avg_losing)
+
 class StatsAnalyzer(Analyzer):
 
     def __init__(self, strategy):
@@ -56,6 +75,10 @@ class StatsAnalyzer(Analyzer):
         result['all']['net_profit'] = sum([pos.pnl() for pos in positions])
         result['long']['net_profit'] = sum([pos.pnl() for pos in longs])
         result['short']['net_profit'] = sum([pos.pnl() for pos in shorts])
+
+        result['all']['total_commission'] = sum([pos.total_commission() for pos in positions])
+        result['long']['total_commission'] = sum([pos.total_commission() for pos in longs])
+        result['short']['total_commission'] = sum([pos.total_commission() for pos in shorts])
 
         result['all']['bars_in_trade'] = sum([pos.bars_in_trade() for pos in positions])
         result['long']['bars_in_trade'] = sum([pos.bars_in_trade() for pos in longs])
@@ -103,24 +126,27 @@ class StatsAnalyzer(Analyzer):
 
         mean = np.mean(list(map(lambda x: x.pnl(), positions)))
         stddev = np.std(list(map(lambda x: x.pnl(), positions)))
-        sharpe = mean / stddev
-        tstat = sharpe * math.sqrt(len(positions))
-        result['all']['sharpe_ratio'] = sharpe
+        z_score = mean / stddev
+        tstat = z_score * math.sqrt(len(positions))
+        result['all']['z_score'] = z_score
         result['all']['t_stat'] = tstat
+        result['all']['kelly'] = calculate_kelly(positions)
 
         mean = np.mean(list(map(lambda x: x.pnl(), longs)))
         stddev = np.std(list(map(lambda x: x.pnl(), longs)))
-        sharpe = mean / stddev
-        tstat = sharpe * math.sqrt(len(longs))
-        result['long']['sharpe_ratio'] = sharpe
+        z_score = mean / stddev
+        tstat = z_score * math.sqrt(len(longs))
+        result['long']['z_score'] = z_score
         result['long']['t_stat'] = tstat
+        result['long']['kelly'] = calculate_kelly(longs)
 
         mean = np.mean(list(map(lambda x: x.pnl(), shorts)))
         stddev = np.std(list(map(lambda x: x.pnl(), shorts)))
-        sharpe = mean / stddev
-        tstat = sharpe * math.sqrt(len(shorts))
-        result['short']['sharpe_ratio'] = sharpe
+        z_score = mean / stddev
+        tstat = z_score * math.sqrt(len(shorts))
+        result['short']['z_score'] = z_score
         result['short']['t_stat'] = tstat
+        result['short']['kelly'] = calculate_kelly(shorts)
 
 
         return result

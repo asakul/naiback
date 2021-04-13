@@ -6,7 +6,7 @@ def EMA(data, period, alpha=None):
     if alpha is None:
         alpha = 2. / (period + 1)
     result = []
-    v = None
+    v = 0
     for d in data:
         if d is None:
             result.append(None)
